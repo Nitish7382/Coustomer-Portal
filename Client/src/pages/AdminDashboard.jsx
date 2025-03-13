@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { fetchProjects, addProject } from "../services/api";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminPanel() {
   const [customers, setCustomers] = useState([]);
@@ -19,6 +20,7 @@ export default function AdminPanel() {
     description: "",
     image: null,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProjects().then(setProjects);
@@ -40,7 +42,7 @@ export default function AdminPanel() {
   };
 
   const handleAddProject = async () => {
-    alert("added")
+    alert("added");
     if (newProject.customerName && newProject.description) {
       const project = await addProject(newProject);
       setProjects([...projects, project]);
@@ -58,10 +60,17 @@ export default function AdminPanel() {
     setNewProject({ ...newProject, image: file });
   };
 
-  return (
-    <div className="p-6 bg-gray-50 min-h-screen text-gray-800">
-      <h1 className="text-4xl font-extrabold mb-8 text-center text-blue-600">Admin Panel</h1>
+  const handleLogout = () => {
+    navigate("/");
+  };
 
+  return (
+    <div className="p-6 bg-amber-200 min-h-screen text-gray-800">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-4xl font-extrabold text-blue-600">Admin Panel</h1>
+        <button onClick={handleLogout} className="px-4 py-2 bg-red-500 text-white rounded-lg shadow hover:bg-red-600">Logout</button>
+      </div>
+      
       {/* Customer Section */}
       <div className="mb-6 p-6 bg-white shadow-xl rounded-lg border border-gray-200">
         <h2 className="text-2xl font-semibold mb-4 text-gray-700">Add New Customer</h2>
@@ -86,17 +95,44 @@ export default function AdminPanel() {
         </button>
       </div>
 
+      {/* Customer List Section */}
+      <div className="mb-6 p-6 bg-white shadow-xl rounded-lg border border-gray-200">
+        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Customers List</h2>
+        <table className="w-full border-collapse border border-gray-300">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border border-gray-300 px-4 py-2">Name</th>
+              <th className="border border-gray-300 px-4 py-2">Email</th>
+              <th className="border border-gray-300 px-4 py-2">Site Location</th>
+            </tr>
+          </thead>
+          <tbody>
+            {customers.map((customer, index) => (
+              <tr key={index} className="text-center">
+                <td className="border border-gray-300 px-4 py-2">{customer.name}</td>
+                <td className="border border-gray-300 px-4 py-2">{customer.email}</td>
+                <td className="border border-gray-300 px-4 py-2">{customer.siteLocation}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       {/* Project Section */}
       <div className="mb-6 p-6 bg-white shadow-xl rounded-lg border border-gray-200">
         <h2 className="text-2xl font-semibold mb-4 text-gray-700">Create New Project</h2>
-        <input
+        <select
           className="border p-3 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
-          placeholder="Customer Name"
           value={newProject.customerName}
           onChange={(e) =>
             setNewProject({ ...newProject, customerName: e.target.value })
           }
-        />
+        >
+          <option value="">Select Customer</option>
+          {customers.map((customer, index) => (
+            <option key={index} value={customer.name}>{customer.name}</option>
+          ))}
+        </select>
         <textarea
           className="border p-3 rounded-lg w-full mt-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           placeholder="Project Description"
@@ -116,29 +152,6 @@ export default function AdminPanel() {
         >
           Add Project
         </button>
-      </div>
-
-      {/* Project List */}
-      <div className="p-6 bg-white shadow-xl rounded-lg border border-gray-200">
-        <h2 className="text-2xl font-semibold mb-4 text-gray-700">Project List</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {projects.map((proj) => (
-            <div
-              key={proj.id}
-              className="p-6 bg-gray-50 border rounded-lg shadow-md hover:shadow-lg transition"
-            >
-              <h3 className="text-lg font-bold text-gray-700">{proj.name}</h3>
-              <p className="text-gray-600">{proj.description}</p>
-              {proj.image && (
-                <img
-                  src={URL.createObjectURL(proj.image)}
-                  alt="Project"
-                  className="mt-2 w-full h-40 object-cover rounded-lg"
-                />
-              )}
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
