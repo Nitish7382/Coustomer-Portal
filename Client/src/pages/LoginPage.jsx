@@ -79,11 +79,11 @@ const LoginPage = () => {
         </form>
 
         <div className="mt-4 text-center">
-          <p className="text-sm text-gray-600">
-            Don't have an account?{" "}
-            <Link to="/register" className="text-blue-500 hover:text-blue-700">
-              Register
-            </Link>
+         <p className="text-xs text-gray-600">
+          *Customer want to login then use "123" as password
+          </p>
+          <p className="text-xs text-gray-600">
+           *Admin register your account through Backend(postman API)
           </p>
         </div>
       </div>
