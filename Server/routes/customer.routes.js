@@ -23,7 +23,7 @@ router.post("/", protect, admin, async (req, res) => {
     const user = await User.create({
       name,
       email,
-      password: Math.random().toString(36).slice(-8), // Generate random password
+      password: "123", // Generate random password
       role: "customer",
     })
 
